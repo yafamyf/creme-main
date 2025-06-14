@@ -1,0 +1,5 @@
+Si jamais, je pense que ca peut poser problème :
+
+J'ai réalisé mon travail sur un pc windows, avec un terminal wsl.
+J'utilise donc le materiel windows (d'ou la présence de batch) pour la manipulation du son sur l'ordinateur.
+Cependant la plupart de mes scripts sont en bash.

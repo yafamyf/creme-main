@@ -1,0 +1,20 @@
+# ---------------------------------------
+# Empatica / données volumineuses
+data/                       # dossier 'data' à la racine
+RecuperationData/Data/      # sous-dossier de récupération
+
+# Fichiers d’environnement
+.env
+*.env
+
+# Python / caches
+__pycache__/
+*.py[cod]
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Travail historique (si toujours présent)
+Travail antérieur/Projet/GestionDonnee/
+Analyse EDA/data/
