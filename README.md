@@ -131,28 +131,6 @@ Example:
 python3 scripts/extract_eda_features.py json/ generated_data/eda_features.csv
 ```
 
-Par exemple, si vos JSON sont placés dans un dossier
-`creme_donnees_expes_montres`, lancez :
-
-```bash
-python3 scripts/extract_eda_features.py creme_donnees_expes_montres/ \
-    generated_data/eda_features.csv
-```
-
 The output lists one row per JSON file with metrics such as mean phasic EDA,
 area under the curve and number of SCR peaks.
 
-## Renaming EDA JSON files
-
-Some datasets store the EDA exports with filenames based on the watch
-identifier (the ``participantID`` field). To use these files with
-`match_eda.py`, their names must match the ``id_participant`` values
-found in ``detections.csv``. If you have a CSV mapping ``participantID``
-to ``id_participant``, you can automate this step:
-
-```bash
-python3 scripts/rename_eda_files.py json/ mapping.csv --output renamed_json/
-```
-
-The command will create ``renamed_json/<id_participant>.json`` for each
-file, ready to be processed by ``match_eda.py``.

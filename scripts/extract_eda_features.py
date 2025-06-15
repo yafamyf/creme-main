@@ -64,6 +64,7 @@ def compute_features(values: list[float], sampling_rate: float) -> dict:
 def process_directory(directory: Path) -> pd.DataFrame:
     rows = []
     for json_file in sorted(directory.rglob("*.json")):
+
         try:
             values, sr = load_eda_json(json_file)
         except Exception as e:
