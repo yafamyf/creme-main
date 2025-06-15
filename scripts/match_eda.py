@@ -51,12 +51,34 @@ def load_detection_csv(path: Path) -> pd.DataFrame:
 
 
 def load_eda_json(path: Path) -> pd.DataFrame:
-    """Load EDA data from a JSON file."""
+    """Load EDA data from a JSON file.
+
+    Files produced by the Embrace device store the EDA signal under
+    ``rawData.eda`` with timestamps expressed in microseconds. Older
+    files may store the fields at the root. This helper handles both
+    layouts and always returns timestamps in seconds.
+    """
     with open(path) as f:
         data = json.load(f)
-    start = data["timestampStart"]
-    freq = data["samplingFrequency"]
-    values = data["values"]
+
+    # some exports wrap the payload in a single-item list
+    if isinstance(data, list):
+        data = data[0]
+
+    if "rawData" in data and "eda" in data["rawData"]:
+        eda = data["rawData"]["eda"]
+    elif "eda" in data:
+        eda = data["eda"]
+    else:
+        raise KeyError("Cannot find EDA data in JSON")
+
+    start = eda["timestampStart"]
+    # convert from microseconds if needed
+    if start > 1_000_000_000_000:
+        start /= 1_000_000
+
+    freq = eda["samplingFrequency"]
+    values = eda["values"]
     timestamps = [start + i / freq for i in range(len(values))]
     df = pd.DataFrame({"timestamp": timestamps, "eda_value": values})
     df.attrs["sampling_rate"] = freq
