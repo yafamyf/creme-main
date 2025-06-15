@@ -139,6 +139,19 @@ Example:
 python3 scripts/extract_eda_features.py json/ generated_data/eda_features.csv
 ```
 
+## Converting JSON files to a global CSV
+
+When matching by timestamp only you may need all EDA samples in a single table.
+`scripts/json_to_eda_csv.py` converts a directory of Embrace JSON exports into a
+CSV with two columns: `timestamp` and `eda_value` (timestamps are normalised to
+seconds).
+
+Example:
+
+```bash
+python3 scripts/json_to_eda_csv.py json/ generated_data/time_all_eda_values.csv
+```
+
 ## Renaming EDA JSON files
 
 Certaines séries de données portent un nom de fichier basé sur le numéro de montre (champ `participantID`).  
