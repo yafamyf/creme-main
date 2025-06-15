@@ -65,7 +65,15 @@ On some READMEs, you may see small images that convey metadata, such as whether 
 Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
 
 ## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+
+Ces outils nécessitent Python 3 et quelques dépendances. Installez-les avec :
+
+```bash
+pip install pandas numpy scipy matplotlib neurokit2 mido
+```
+
+Toutes les commandes présentées dans ce document doivent être exécutées depuis
+la racine du projet afin que les chemins relatifs fonctionnent correctement.
 
 ## Usage
 Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
@@ -131,6 +139,12 @@ Example:
 python3 scripts/extract_eda_features.py json/ generated_data/eda_features.csv
 ```
 
-The output lists one row per JSON file with metrics such as mean phasic EDA,
-area under the curve and number of SCR peaks.
+## Renaming EDA JSON files
 
+Certaines séries de données portent un nom de fichier basé sur le numéro de montre (champ `participantID`).  
+Pour que `match_eda.py` les retrouve correctement, leur nom doit correspondre à la valeur `id_participant` utilisée dans **detections.csv**.
+
+Si vous disposez d’un CSV de correspondance (par exemple `correspondanceIdNom.csv` exporté depuis Embrace) qui fait le lien entre le `participantID` (watch ID) et le `id_participant` (hash), vous pouvez automatiser le renommage :
+
+```bash
+python3 scripts/rename_eda_files.py json/ correspondanceIdNom.csv --output renamed_json/

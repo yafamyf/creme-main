@@ -2,13 +2,12 @@
 """Rename EDA JSON files according to a mapping.
 
 This helper scans a directory of Embrace JSON exports, reads the
-``participantID`` field from each file and renames (or copies) the
-file so that its name matches the ``id_participant`` used in
-``detections.csv``.
+``participantID`` field from each file and renames (or copies) the file
+so that its name matches the ``id_participant`` used in ``detections.csv``.
 
-The mapping CSV must contain at least two columns:
-``participantID`` (the watch identifier found in the JSON files) and
-``id_participant`` (the hashed identifier used in detections.csv).
+The mapping CSV may :
+  • contenir les en-têtes explicites ``participantID,id_participant`` ;
+  • être sans en-tête (export Embrace) : on prend alors les colonnes 3 et 4.
 
 Example:
     python3 scripts/rename_eda_files.py json/ mapping.csv --output renamed_json/
@@ -25,11 +24,32 @@ from pathlib import Path
 
 def load_mapping(path: Path) -> dict[str, str]:
     """Return a dictionary {participantID -> id_participant}."""
-    with path.open(newline="", encoding="utf-8-sig") as f:
-        reader = csv.DictReader(f)
-        if "participantID" not in reader.fieldnames or "id_participant" not in reader.fieldnames:
-            raise ValueError("mapping CSV must contain 'participantID' and 'id_participant' columns")
-        return {row["participantID"]: row["id_participant"] for row in reader}
+    with path.open(newline='', encoding='utf-8-sig') as f:
+        rows = list(csv.reader(f))
+
+    if not rows:
+        return {}
+
+    header = [c.strip() for c in rows[0]]
+    # Cas 1 : le CSV a des titres de colonnes explicites
+    if 'participantID' in header and 'id_participant' in header:
+        pid_idx = header.index('participantID')
+        id_idx  = header.index('id_participant')
+        data_rows = rows[1:]          # on saute l’en-tête
+    # Cas 2 : pas d’en-tête, on suppose colonnes 3 et 4
+    else:
+        pid_idx, id_idx = 2, 3
+        data_rows = rows
+
+    mapping: dict[str, str] = {}
+    for row in data_rows:
+        if len(row) <= max(pid_idx, id_idx):
+            continue
+        pid = row[pid_idx].strip()
+        target = row[id_idx].strip()
+        if pid and target:
+            mapping[pid] = target
+    return mapping
 
 
 def get_participant_id(json_path: Path) -> str | None:
