@@ -91,3 +91,27 @@ For open source projects, say how it is licensed.
 
 ## Project status
 If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+
+## EDA sequence matching
+
+The `scripts/match_eda.py` utility matches detection timestamps with EDA values.
+It requires a detection CSV containing `id_participant`, `task_type`,
+`numero_sequence` and `time_beginning` columns. If the file does not provide
+`time_ending`, you must supply a `midi_file` column so that the script can
+calculate the duration of each sequence (this step uses the optional `mido`
+package).
+For each participant a JSON file `<id_participant>.json` must be placed in the
+provided EDA directory and contain `timestampStart`, `samplingFrequency` and
+`values` fields.
+
+Example:
+
+```bash
+python3 scripts/match_eda.py detections.csv eda_json/ output_dir merged.csv features.csv
+```
+
+The command creates one PNG per sequence under
+`<output_dir>/<id_participant>/<task_type>/`. It also exports the merged
+`id_participant,numero_sequence,timestamp,eda_value` table to `merged.csv` and
+a `features.csv` file containing EDA statistics for each sequence (mean,
+median, number of peaks, etc.).
