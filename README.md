@@ -148,3 +148,14 @@ Si vous disposez d’un CSV de correspondance (par exemple `correspondanceIdNom.
 
 ```bash
 python3 scripts/rename_eda_files.py json/ correspondanceIdNom.csv --output renamed_json/
+```
+
+## Timestamp-based matching
+
+When several participants share the same watch identifier, matching EDA files by
+name becomes unreliable. Use `scripts/match_eda_by_timestamp.py` to merge
+detection windows with all JSON exports based solely on timestamps.
+
+```bash
+python3 scripts/match_eda_by_timestamp.py detections.csv path/to/json/ generated_data/
+```
