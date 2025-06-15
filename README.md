@@ -118,3 +118,18 @@ The command creates one PNG per sequence under
 `id_participant,numero_sequence,timestamp,eda_value` table to `merged.csv` and
 a `features.csv` file containing EDA statistics for each sequence (mean,
 median, number of peaks, etc.).
+
+## Basic EDA feature extraction
+
+The repository also provides `scripts/extract_eda_features.py` to compute
+overall EDA statistics for each JSON file independently. It scans a directory
+of Embrace JSON exports and writes a summary CSV with phasic features.
+
+Example:
+
+```bash
+python3 scripts/extract_eda_features.py json/ generated_data/eda_features.csv
+```
+
+The output lists one row per JSON file with metrics such as mean phasic EDA,
+area under the curve and number of SCR peaks.
