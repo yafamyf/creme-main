@@ -1,8 +1,12 @@
 import csv
 from pathlib import Path
 
-BASE = Path('Travail antérieur/Projet/GestionDonnee/GestionDonnee')
-SEQUENCE_DIR = Path('Travail antérieur/Projet/Sequence/SequenceRythme')
+# Resolve paths relative to the repository root so the script works regardless
+# of the current working directory. The script itself lives in `scripts/`,
+# therefore the project root is two directories up from this file.
+ROOT = Path(__file__).resolve().parent.parent
+BASE = ROOT / 'Travail antérieur' / 'Projet' / 'GestionDonnee' / 'GestionDonnee'
+SEQUENCE_DIR = ROOT / 'Travail antérieur' / 'Projet' / 'Sequence' / 'SequenceRythme'
 TASKS = ['Perception', 'Reproduction']
 
 rows = []
@@ -16,7 +20,7 @@ for task in TASKS:
         info_csv = participant / 'InformationExperience.csv'
         if not info_csv.exists():
             continue
-        with info_csv.open() as f:
+        with info_csv.open(encoding='utf-8-sig') as f:
             reader = csv.DictReader(f, skipinitialspace=True)
             for r in reader:
                 try:
@@ -30,13 +34,13 @@ for task in TASKS:
                     'task_type': task,
                     'numero_sequence': seq,
                     'time_beginning': t0,
-                    'midi_file': str(midi)
+                    'midi_file': str(midi.relative_to(ROOT))
                 })
 
 rows.sort(key=lambda x: (x['id_participant'], x['task_type'], x['time_beginning']))
 
-out_path = Path('detections.csv')
-with out_path.open('w', newline='') as f:
+out_path = ROOT / 'detections.csv'
+with out_path.open('w', newline='', encoding='utf-8') as f:
     writer = csv.DictWriter(f, fieldnames=['id_participant','task_type','numero_sequence','time_beginning','midi_file'])
     writer.writeheader()
     writer.writerows(rows)
