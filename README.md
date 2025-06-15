@@ -101,8 +101,11 @@ It requires a detection CSV containing `id_participant`, `task_type`,
 calculate the duration of each sequence (this step uses the optional `mido`
 package).
 For each participant a JSON file `<id_participant>.json` must be placed in the
-provided EDA directory and contain `timestampStart`, `samplingFrequency` and
-`values` fields.
+provided EDA directory. Files exported from Embrace store the signal under
+`rawData.eda` with the timestamp expressed in **microseconds**. Older files may
+contain `timestampStart`, `samplingFrequency` and `values` at the root. Some
+exports wrap the entire document inside a single-item array (`[ {...} ]`). The
+utility automatically detects these layouts and normalises timestamps to seconds.
 
 Example:
 
