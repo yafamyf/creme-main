@@ -7,7 +7,6 @@ i = 0
 Etape = sys.argv[1]
 Tempo = sys.argv[2]
 #Tempo = 70
-#ok
 
 
 Signification = {
