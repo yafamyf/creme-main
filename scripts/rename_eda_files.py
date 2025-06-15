@@ -5,11 +5,9 @@ This helper scans a directory of Embrace JSON exports, reads the
 ``participantID`` field from each file and renames (or copies) the file
 so that its name matches the ``id_participant`` used in ``detections.csv``.
 
-The mapping CSV must provide the watch identifier (``participantID``)
-and the corresponding ``id_participant`` used in ``detections.csv``.
-It may contain additional columns or omit the header entirely. In that
-case the third and fourth columns are assumed to be
-``participantID`` and ``id_participant``.
+The mapping CSV may :
+  • contenir les en-têtes explicites ``participantID,id_participant`` ;
+  • être sans en-tête (export Embrace) : on prend alors les colonnes 3 et 4.
 
 Example:
     python3 scripts/rename_eda_files.py json/ mapping.csv --output renamed_json/
@@ -25,27 +23,22 @@ from pathlib import Path
 
 
 def load_mapping(path: Path) -> dict[str, str]:
-    """Return a dictionary ``{participantID -> id_participant}``.
-
-    The CSV may either provide explicit ``participantID`` and
-    ``id_participant`` headers or be headerless (e.g. the Embrace export
-    ``correspondanceIdNom.csv``). In the latter case the function uses the
-    third and fourth columns.
-    """
-    with path.open(newline="", encoding="utf-8-sig") as f:
+    """Return a dictionary {participantID -> id_participant}."""
+    with path.open(newline='', encoding='utf-8-sig') as f:
         rows = list(csv.reader(f))
 
     if not rows:
         return {}
 
     header = [c.strip() for c in rows[0]]
-    if "participantID" in header and "id_participant" in header:
-        pid_idx = header.index("participantID")
-        id_idx = header.index("id_participant")
-        data_rows = rows[1:]
+    # Cas 1 : le CSV a des titres de colonnes explicites
+    if 'participantID' in header and 'id_participant' in header:
+        pid_idx = header.index('participantID')
+        id_idx  = header.index('id_participant')
+        data_rows = rows[1:]          # on saute l’en-tête
+    # Cas 2 : pas d’en-tête, on suppose colonnes 3 et 4
     else:
-        pid_idx = 2
-        id_idx = 3
+        pid_idx, id_idx = 2, 3
         data_rows = rows
 
     mapping: dict[str, str] = {}

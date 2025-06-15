@@ -139,32 +139,12 @@ Example:
 python3 scripts/extract_eda_features.py json/ generated_data/eda_features.csv
 ```
 
-Par exemple, si vos JSON sont placés dans un dossier
-`creme_donnees_expes_montres`, lancez :
-
-```bash
-python3 scripts/extract_eda_features.py creme_donnees_expes_montres/ \
-    generated_data/eda_features.csv
-```
-
-The output lists one row per JSON file with metrics such as mean phasic EDA,
-area under the curve and number of SCR peaks.
-
 ## Renaming EDA JSON files
 
-Some datasets store the EDA exports with filenames based on the watch
-identifier (the ``participantID`` field). To use these files with
-`match_eda.py`, their names must match the ``id_participant`` values
-found in ``detections.csv``. If you have a CSV mapping ``participantID``
-to ``id_participant`` (for instance the file ``correspondanceIdNom.csv``
-exported from Embrace), you can automate this step.  The mapping may
-either provide explicit headers or simply list four columns where the
-third one contains the watch ID and the fourth one the hashed
-``id_participant``:
+Certaines séries de données portent un nom de fichier basé sur le numéro de montre (champ `participantID`).  
+Pour que `match_eda.py` les retrouve correctement, leur nom doit correspondre à la valeur `id_participant` utilisée dans **detections.csv**.
+
+Si vous disposez d’un CSV de correspondance (par exemple `correspondanceIdNom.csv` exporté depuis Embrace) qui fait le lien entre le `participantID` (watch ID) et le `id_participant` (hash), vous pouvez automatiser le renommage :
 
 ```bash
 python3 scripts/rename_eda_files.py json/ correspondanceIdNom.csv --output renamed_json/
-```
-
-The command will create ``renamed_json/<id_participant>.json`` for each
-file, ready to be processed by ``match_eda.py``.
