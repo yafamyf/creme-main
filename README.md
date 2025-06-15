@@ -133,3 +133,4 @@ python3 scripts/extract_eda_features.py json/ generated_data/eda_features.csv
 
 The output lists one row per JSON file with metrics such as mean phasic EDA,
 area under the curve and number of SCR peaks.
+
