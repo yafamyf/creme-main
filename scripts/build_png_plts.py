@@ -2,10 +2,11 @@
 """Génère un PNG par séquence EDA pour chaque participant.
 
 Usage :
-    python build_png_plots.py time_all_trials.csv eda_samples.csv plots_dir
+    python build_png_plts.py time_all_trials.csv eda_samples.csv plots_dir
 """
 from __future__ import annotations
-import argparse, csv, sys
+import argparse
+import sys
 from pathlib import Path
 
 import pandas as pd
