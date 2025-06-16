@@ -3,6 +3,9 @@
 
 Usage :
     python build_png_plts.py time_all_trials.csv eda_samples.csv plots_dir
+
+Le fichier ``eda_samples.csv`` doit contenir la colonne ``task_type``.
+Si ce n'est pas le cas, celle‑ci est récupérée depuis ``time_all_trials.csv``.
 """
 from __future__ import annotations
 import argparse
@@ -23,11 +26,11 @@ def load_trials(path: Path) -> pd.DataFrame:
     return df[["id_participant", "task_type", "numero_sequence"]]
 
 def load_samples(path: Path) -> pd.DataFrame:
-    """eda_samples.csv → DataFrame indexé sur (id, sequence)."""
+    """Charge ``eda_samples.csv`` en vérifiant ses colonnes."""
     df = pd.read_csv(path)
-    cols = {"id_participant", "sequence_number", "timestamp", "eda_value"}
-    if not cols.issubset(df.columns):
-        missing = cols - set(df.columns)
+    base_cols = {"id_participant", "sequence_number", "timestamp", "eda_value"}
+    if not base_cols.issubset(df.columns):
+        missing = base_cols - set(df.columns)
         sys.exit(f"✖ colonnes manquantes dans {path.name} : {missing}")
     return df
 
@@ -41,17 +44,20 @@ def main() -> None:
     trials = load_trials(args.trials_csv)
     samples = load_samples(args.samples_csv)
 
-    # Jonction pour récupérer le task_type (perception / reproduction)
-    merged = samples.merge(
-        trials,
-        left_on=["id_participant", "sequence_number"],
-        right_on=["id_participant", "numero_sequence"],
-        how="left",
-    )
-    if merged["task_type"].isna().any():
-        nb = merged["task_type"].isna().sum()
-        print(f"⚠ {nb} lignes EDA sans séquence correspondante – ignorées.")
-        merged = merged.dropna(subset=["task_type"])
+    if "task_type" not in samples.columns:
+        # Ajout du type de tâche à partir de time_all_trials.csv
+        merged = samples.merge(
+            trials,
+            left_on=["id_participant", "sequence_number"],
+            right_on=["id_participant", "numero_sequence"],
+            how="left",
+        )
+        if merged["task_type"].isna().any():
+            nb = merged["task_type"].isna().sum()
+            print(f"⚠ {nb} lignes EDA sans séquence correspondante – ignorées.")
+            merged = merged.dropna(subset=["task_type"])
+    else:
+        merged = samples
 
     # Boucle sur chaque séquence
     for (pid, seq, task), grp in merged.groupby(

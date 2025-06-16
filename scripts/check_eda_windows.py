@@ -36,7 +36,7 @@ def load_trials(path: Path) -> pd.DataFrame:
 
 def load_samples(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path)
-    cols = {"id_participant", "sequence_number", "timestamp"}
+    cols = {"id_participant", "sequence_number", "timestamp", "task_type"}
     if not cols.issubset(df.columns):
         missing = cols - set(df.columns)
         sys.exit(f"✖ colonnes manquantes dans {path.name} : {missing}")
@@ -48,8 +48,9 @@ def check_windows(trials: pd.DataFrame, samples: pd.DataFrame) -> pd.DataFrame:
     records = []
     for _, t in trials.iterrows():
         mask = (
-            (samples["id_participant"] == t["id_participant"]) &
-            (samples["sequence_number"] == t["numero_sequence"])
+            (samples["id_participant"] == t["id_participant"])
+            & (samples["sequence_number"] == t["numero_sequence"])
+            & (samples["task_type"] == t["task_type"])
         )
         grp = samples[mask]
         theo = t["time_ending"] - t["time_beginning"]
