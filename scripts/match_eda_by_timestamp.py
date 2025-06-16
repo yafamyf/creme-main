@@ -9,7 +9,7 @@ It then generates a final CSV ``merged_eda_trials.csv`` where each line
 corresponds to a timestamped EDA value linked to a participant and
 sequence number.
 
-Example usage::
+Example usage:
 
     python3 match_eda_by_timestamp.py detections.csv json_dir generated_data/
 
