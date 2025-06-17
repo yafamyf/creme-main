@@ -10,7 +10,7 @@ The mapping CSV may :
   • être sans en-tête (export Embrace) : on prend alors les colonnes 3 et 4.
 
 Example:
-    python3 scripts/rename_eda_files.py json/ mapping.csv --output renamed_json/
+    python scripts/rename_eda_files.py json/ mapping.csv --output renamed_json/
 """
 
 from __future__ import annotations
