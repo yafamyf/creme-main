@@ -30,6 +30,10 @@ def process_and_plot_signal(signal, sampling_rate, save_path, title, output_dir)
         print(f"⚠ Trop peu de données ({len(signal)}), ignoré : {save_path}")
         return
 
+    if np.std(signal) < 0.02:
+        print(f"⚠ Signal plat ignoré (std={np.std(signal):.4f}): {save_path}")
+        return
+    
     try:
         eda = nk.eda_process(signal, sampling_rate=sampling_rate)
     except Exception as e:
@@ -51,7 +55,10 @@ def process_and_plot_signal(signal, sampling_rate, save_path, title, output_dir)
     plt.title(title)
     plt.legend()
     plt.tight_layout()
-    plt.ylim(0, 12)
+    min_val = np.min(df["EDA_Raw"])
+    max_val = np.max(df["EDA_Raw"])
+    plt.ylim(min_val - 0.1, max_val + 0.1)
+
     plt.savefig(save_path, dpi=150)
     plt.close()
 
